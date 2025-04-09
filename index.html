@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肥料DB - 農業の効率化をサポートするデータベース</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #81c784;
+            --accent: #f9a825;
+            --light: #f1f8e9;
+            --dark: #1b5e20;
+            --text: #333;
+            --light-text: #666;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+        }
+        
+        body {
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            margin-right: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav ul li a:hover {
+            color: var(--accent);
+        }
+        
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #f57f17;
+            transform: translateY(-2px);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(46, 125, 50, 0.8), rgba(46, 125, 50, 0.8)), url('/api/placeholder/1200/600') center/cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        section {
+            padding: 5rem 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: -10px;
+            left: 25%;
+        }
+        
+        .features {
+            background-color: var(--light);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .feature-img {
+            height: 200px;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+        
+        .feature-content {
+            padding: 1.5rem;
+        }
+        
+        .feature-content h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .how-it-works {
+            background-color: white;
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 3rem;
+            align-items: center;
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 2rem;
+        }
+        
+        .step-content h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .testimonials {
+            background-color: var(--light);
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            color: var(--light-text);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            margin-right: 1rem;
+        }
+        
+        .author-info h4 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .pricing {
+            background-color: white;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .pricing-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .pricing-card:hover {
+            border-color: var(--primary);
+            transform: scale(1.03);
+        }
+        
+        .pricing-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 2rem;
+        }
+        
+        .pricing-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            font-weight: normal;
+        }
+        
+        .pricing-features {
+            padding: 2rem;
+        }
+        
+        .pricing-features ul {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features ul li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .pricing-features ul li::before {
+            content: '✓';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .cta {
+            background: linear-gradient(rgba(46, 125, 50, 0.9), rgba(46, 125, 50, 0.9)), url('/api/placeholder/1200/600') center/cover;
+            color: white;
+            text-align: center;
+        }
+        
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta p {
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 2rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links ul li a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🌱</span>
+                <span>肥料DB</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#features">特徴</a></li>
+                    <li><a href="#how-it-works">使い方</a></li>
+                    <li><a href="#testimonials">利用者の声</a></li>
+                    <li><a href="#pricing">料金プラン</a></li>
+                    <li><a href="#" class="btn">無料登録</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>農業の効率化をサポートする肥料データベース</h1>
+            <p>作物に最適な肥料選びをデータに基づいてサポート。収穫量アップと環境負荷低減を同時に実現します。</p>
+            <a href="#" class="btn">今すぐ始める</a>
+        </div>
+    </section>
+    
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>肥料DBの特徴</h2>
+                <p>データ駆動型の農業をサポートする充実の機能</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-img">📊</div>
+                    <div class="feature-content">
+                        <h3>豊富なデータベース</h3>
+                        <p>5,000種類以上の肥料データを網羅。成分、特性、適合作物などを詳細に記録しています。</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">🔍</div>
+                    <div class="feature-content">
+                        <h3>スマート検索</h3>
+                        <p>作物、土壌タイプ、地域条件など、様々な条件から最適な肥料を検索できます。</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">📱</div>
+                    <div class="feature-content">
+                        <h3>モバイル対応</h3>
+                        <p>スマートフォンやタブレットからもアクセス可能。圃場でもすぐに情報を確認できます。</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">📈</div>
+                    <div class="feature-content">
+                        <h3>効果分析</h3>
+                        <p>使用した肥料の効果を記録・分析し、次のシーズンへの改善点を可視化します。</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">🌍</div>
+                    <div class="feature-content">
+                        <h3>環境負荷評価</h3>
+                        <p>各肥料の環境負荷を数値化。持続可能な農業をデータで支援します。</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">🤝</div>
+                    <div class="feature-content">
+                        <h3>コミュニティ</h3>
+                        <p>同じ作物を育てる農家同士で情報交換。成功事例や失敗談を共有できます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>肥料DBの使い方</h2>
+                <p>簡単3ステップで最適な肥料を見つけられます</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>条件を入力</h3>
+                        <p>栽培する作物、土壌の種類、地域の気候条件などを入力します。既存の圃場データがある場合はインポートも可能です。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>肥料を検索</h3>
+                        <p>入力条件に基づいて、最適な肥料候補がリストアップされます。効果予測、コスト、環境負荷などを比較できます。</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>結果を記録</h3>
+                        <p>実際に使用した肥料の効果を記録。次回からはこのデータを基にさらに精度の高い推奨が受けられます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>利用者の声</h2>
+                <p>肥料DBを活用している農家の皆さんからのフィードバック</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>「肥料DBを使い始めてから、トマトの収穫量が約20%増加しました。コストも抑えられるので一石二鳥です。」</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>田中 農夫</h4>
+                            <p>愛知県 / トマト農家</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>「土壌分析データをアップロードするだけで最適な肥料を教えてくれるので、とても助かっています。初心者でも安心です。」</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>佐藤 花子</h4>
+                            <p>北海道 / 新規就農者</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>「環境負荷の少ない肥料を選べるようになり、エコファーマー認証の取得にも役立ちました。消費者からの評価も上がっています。」</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>山本 誠</h4>
+                            <p>熊本県 / 有機野菜農家</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>料金プラン</h2>
+                <p>あなたの農業規模に合わせて選べる3つのプラン</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>個人プラン</h3>
+                        <div class="price">¥980<span>/月</span></div>
+                        <p>小規模農家向け</p>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li>基本データベースへのアクセス</li>
+                            <li>3つまでの圃場登録</li>
+                            <li>月10回までの詳細検索</li>
+                            <li>基本的な分析レポート</li>
+                        </ul>
+                        <a href="#" class="btn">選択する</a>
+                    </div>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header" style="background-color: var(--accent);">
+                        <h3>プロフェッショナル</h3>
+                        <div class="price">¥2,980<span>/月</span></div>
+                        <p>中規模農家向け</p>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li>拡張データベースへのアクセス</li>
+                            <li>20までの圃場登録</li>
+                            <li>無制限の詳細検索</li>
+                            <li>高度な分析レポート</li>
+                            <li>コミュニティフォーラムへのアクセス</li>
+                        </ul>
+                        <a href="#" class="btn">選択する</a>
+                    </div>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>エンタープライズ</h3>
+                        <div class="price">¥9,800<span>/月</span></div>
+                        <p>大規模農業法人向け</p>
+                    </div>
+                    <div class="pricing-features">
+                        <ul>
+                            <li>完全データベースへのアクセス</li>
+                            <li>無制限の圃場登録</li>
+                            <li>無制限の詳細検索</li>
+                            <li>カスタム分析レポート</li>
+                            <li>専門家によるコンサルティング</li>
+                            <li>APIアクセス</li>
+                        </ul>
+                        <a href="#" class="btn">選択する</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta">
+        <div class="cta-content">
+            <h2>今すぐ肥料DBを試してみましょう</h2>
+            <p>14日間の無料トライアル。クレジットカード情報不要で、いつでもキャンセル可能です。</p>
+            <a href="#" class="btn">無料でスタート</a>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-about">
+                <div class="footer-logo">🌱 肥料DB</div>
+                <p>データに基づいた効率的な農業をサポートする肥料データベースサービス。持続可能な農業と環境保全に貢献します。</p>
+            </div>
+            <div class="footer-links">
+                <h3>サービス</h3>
+                <ul>
+                    <li><a href="#">肥料検索</a></li>
+                    <li><a href="#">効果分析</a></li>
+                    <li><a href="#">コミュニティ</a></li>
+                    <li><a href="#">API連携</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>会社情報</h3>
+                <ul>
+                    <li><a href="#">会社概要</a></li>
+                    <li><a href="#">プライバシーポリシー</a></li>
+                    <li><a href="#">利用規約</a></li>
+                    <li><a href="#">お問い合わせ</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>サポート</h3>
+                <ul>
+                    <li><a href="#">よくある質問</a></li>
+                    <li><a href="#">使い方ガイド</a></li>
+                    <li><a href="#">お問い合わせ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 肥料DB All Rights Reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
