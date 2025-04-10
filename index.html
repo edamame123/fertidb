@@ -1,623 +1,693 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>肥料データベース - 農業に役立つ肥料情報を検索</title>
     <style>
-        :root {
-            --primary: #2e7d32;
-            --secondary: #81c784;
-            --accent: #f9a825;
-            --light: #f1f8e9;
-            --dark: #1b5e20;
-            --text: #333;
-            --light-text: #666;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-        }
-        
-        body {
-            color: var(--text);
-            line-height: 1.6;
-        }
-        
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem;
-            position: fixed;
-            width: 100%;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
+      :root {
+        --primary: #2e7d32;
+        --secondary: #81c784;
+        --accent: #f9a825;
+        --light: #f1f8e9;
+        --dark: #1b5e20;
+        --text: #333;
+        --light-text: #666;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          "Hiragino Sans", Meiryo, sans-serif;
+      }
+
+      body {
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      header {
+        background-color: var(--primary);
+        color: white;
+        padding: 1rem;
+        position: fixed;
+        width: 100%;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-icon {
+        margin-right: 0.5rem;
+        font-size: 2rem;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+      }
+
+      nav ul li {
+        margin-left: 2rem;
+      }
+
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s;
+        font-weight: 500;
+      }
+
+      nav ul li a:hover {
+        color: var(--accent);
+      }
+
+      .btn {
+        background-color: var(--accent);
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-block;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background-color: #f57f17;
+        transform: translateY(-2px);
+      }
+
+      .hero {
+        background: linear-gradient(
+            rgba(46, 125, 50, 0.8),
+            rgba(46, 125, 50, 0.8)
+          ),
+          url("/api/placeholder/1200/600") center/cover;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        color: white;
+        text-align: center;
+        padding-top: 80px;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+      }
+
+      section {
+        padding: 5rem 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .section-title h2 {
+        font-size: 2.5rem;
+        color: var(--dark);
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+
+      .section-title h2::after {
+        content: "";
+        position: absolute;
+        width: 50%;
+        height: 3px;
+        background-color: var(--accent);
+        bottom: -10px;
+        left: 25%;
+      }
+
+      .features {
+        background-color: var(--light);
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .feature-card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature-img {
+        height: 200px;
+        background-color: var(--secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: white;
+      }
+
+      .feature-content {
+        padding: 1.5rem;
+      }
+
+      .feature-content h3 {
+        color: var(--dark);
+        margin-bottom: 1rem;
+      }
+
+      .how-it-works {
+        background-color: white;
+      }
+
+      .steps {
+        display: flex;
+        flex-direction: column;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .step {
+        display: flex;
+        margin-bottom: 3rem;
+        align-items: center;
+      }
+
+      .step-number {
+        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-right: 2rem;
+      }
+
+      .step-content h3 {
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+      }
+
+      .about {
+        background-color: var(--light);
+        text-align: left;
+      }
+
+      .about-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .about-content p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .about-content ul {
+        list-style: disc;
+        margin-left: 2rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .about-content ul li {
+        margin-bottom: 0.5rem;
+      }
+
+      .cta {
+        background: linear-gradient(
+            rgba(46, 125, 50, 0.9),
+            rgba(46, 125, 50, 0.9)
+          ),
+          url("/api/placeholder/1200/600") center/cover;
+        color: white;
+        text-align: center;
+      }
+
+      .cta-content {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .cta h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .cta p {
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+      }
+
+      footer {
+        background-color: var(--dark);
+        color: white;
+        padding: 3rem 2rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+      }
+
+      .footer-logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      .footer-links h3 {
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+
+      .footer-links ul {
+        list-style: none;
+      }
+
+      .footer-links ul li {
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-links ul li a {
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+
+      .footer-links ul li a:hover {
+        color: white;
+      }
+
+      .footer-bottom {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* テーブルのスタイル */
+      .sample-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 2rem 0;
+      }
+
+      .sample-table th,
+      .sample-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      .sample-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+
+      .sample-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      @media (max-width: 768px) {
         .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
+          font-size: 1.5rem;
         }
-        
-        .logo-icon {
-            margin-right: 0.5rem;
-            font-size: 2rem;
-        }
-        
+
         nav ul {
-            display: flex;
-            list-style: none;
+          display: none;
         }
-        
-        nav ul li {
-            margin-left: 2rem;
-        }
-        
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-        
-        nav ul li a:hover {
-            color: var(--accent);
-        }
-        
-        .btn {
-            background-color: var(--accent);
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: inline-block;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .btn:hover {
-            background-color: #f57f17;
-            transform: translateY(-2px);
-        }
-        
-        .hero {
-            background: linear-gradient(rgba(46, 125, 50, 0.8), rgba(46, 125, 50, 0.8)), url('/api/placeholder/1200/600') center/cover;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            color: white;
-            text-align: center;
-            padding-top: 80px;
-        }
-        
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
+
         .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
+          font-size: 2.2rem;
         }
-        
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-        }
-        
-        section {
-            padding: 5rem 2rem;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
+
         .section-title h2 {
-            font-size: 2.5rem;
-            color: var(--dark);
-            position: relative;
-            display: inline-block;
-            margin-bottom: 1rem;
+          font-size: 2rem;
         }
-        
-        .section-title h2::after {
-            content: '';
-            position: absolute;
-            width: 50%;
-            height: 3px;
-            background-color: var(--accent);
-            bottom: -10px;
-            left: 25%;
-        }
-        
-        .features {
-            background-color: var(--light);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .feature-card {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .feature-img {
-            height: 200px;
-            background-color: var(--secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: white;
-        }
-        
-        .feature-content {
-            padding: 1.5rem;
-        }
-        
-        .feature-content h3 {
-            color: var(--dark);
-            margin-bottom: 1rem;
-        }
-        
-        .how-it-works {
-            background-color: white;
-        }
-        
-        .steps {
-            display: flex;
-            flex-direction: column;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
+
         .step {
-            display: flex;
-            margin-bottom: 3rem;
-            align-items: center;
+          flex-direction: column;
+          text-align: center;
         }
-        
+
         .step-number {
-            flex-shrink: 0;
-            width: 60px;
-            height: 60px;
-            background-color: var(--primary);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-right: 2rem;
+          margin-right: 0;
+          margin-bottom: 1rem;
         }
-        
-        .step-content h3 {
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-        
-        .about {
-            background-color: var(--light);
-            text-align: left;
-        }
-        
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .about-content p {
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
-        }
-        
-        .about-content ul {
-            list-style: disc;
-            margin-left: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .about-content ul li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .cta {
-            background: linear-gradient(rgba(46, 125, 50, 0.9), rgba(46, 125, 50, 0.9)), url('/api/placeholder/1200/600') center/cover;
-            color: white;
-            text-align: center;
-        }
-        
-        .cta-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .cta p {
-            margin-bottom: 2rem;
-            font-size: 1.2rem;
-        }
-        
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 3rem 2rem;
-        }
-        
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-        }
-        
-        .footer-logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        
-        .footer-links h3 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        
-        .footer-links ul {
-            list-style: none;
-        }
-        
-        .footer-links ul li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .footer-links ul li a {
-            color: #ccc;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .footer-links ul li a:hover {
-            color: white;
-        }
-        
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        /* テーブルのスタイル */
+
         .sample-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
+          font-size: 0.9rem;
         }
-        
-        .sample-table th,
-        .sample-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        
-        .sample-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        
-        .sample-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        
-        @media (max-width: 768px) {
-            .logo {
-                font-size: 1.5rem;
-            }
-            
-            nav ul {
-                display: none;
-            }
-            
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-            
-            .section-title h2 {
-                font-size: 2rem;
-            }
-            
-            .step {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .step-number {
-                margin-right: 0;
-                margin-bottom: 1rem;
-            }
-            
-            .sample-table {
-                font-size: 0.9rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <div class="header-content">
-            <div class="logo">
-                <span class="logo-icon">🌱</span>
-                <span>肥料データベース</span>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#features">特徴</a></li>
-                    <li><a href="#how-it-works">使い方</a></li>
-                    <li><a href="#sample">データ例</a></li>
-                    <li><a href="#about">サイトについて</a></li>
-                    <li><a href="/" class="btn">データベースを使う</a></li>
-                </ul>
-            </nav>
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">🌱</span>
+          <span>肥料データベース</span>
         </div>
+        <nav>
+          <ul>
+            <li><a href="#features">特徴</a></li>
+            <li><a href="#how-it-works">使い方</a></li>
+            <li><a href="#sample">データ例</a></li>
+            <li><a href="#about">サイトについて</a></li>
+            <li>
+              <a href="https://fertilizer-list-01.pages.dev/" class="btn"
+                >データベースを使う</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
-    
+
     <section class="hero">
-        <div class="hero-content">
-            <h1>農業を効率化する肥料データベース</h1>
-            <p>肥料の成分や特性を詳細に検索できる無料データベース。農林水産省の肥料登録情報を基に、最適な肥料選びをサポートします。</p>
-            <a href="/" class="btn">今すぐ検索する</a>
-        </div>
+      <div class="hero-content">
+        <h1>農業を効率化する肥料データベース</h1>
+        <p>
+          肥料の成分や特性を詳細に検索できる無料データベース。農林水産省の肥料登録情報を基に、最適な肥料選びをサポートします。
+        </p>
+        <a href="/" class="btn">今すぐ検索する</a>
+      </div>
     </section>
-    
+
     <section id="features" class="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>肥料データベースの特徴</h2>
-                <p>効率的な肥料選びをサポートする機能</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-img">📊</div>
-                    <div class="feature-content">
-                        <h3>豊富なデータベース</h3>
-                        <p>多数の肥料データを網羅。成分情報、製造元、登録情報などを詳細に記録しています。</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-img">🔍</div>
-                    <div class="feature-content">
-                        <h3>詳細な成分検索</h3>
-                        <p>窒素、リン酸、カリウムなどの成分含有量で検索。必要な栄養素を含む肥料を簡単に見つけられます。</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-img">📱</div>
-                    <div class="feature-content">
-                        <h3>モバイル対応</h3>
-                        <p>スマートフォンやタブレットからもアクセス可能。圃場でもすぐに情報を確認できます。</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-img">📋</div>
-                    <div class="feature-content">
-                        <h3>信頼できる情報源</h3>
-                        <p>農林水産省の肥料登録情報を基にしており、信頼性の高いデータを提供しています。</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-img">💯</div>
-                    <div class="feature-content">
-                        <h3>完全無料</h3>
-                        <p>すべての機能を無料で利用できます。登録不要でどなたでもすぐに使えます。</p>
-                    </div>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-img">⚡</div>
-                    <div class="feature-content">
-                        <h3>高速検索</h3>
-                        <p>複数の条件を組み合わせた検索も高速に結果を表示。効率的に肥料を絞り込めます。</p>
-                    </div>
-                </div>
-            </div>
+      <div class="container">
+        <div class="section-title">
+          <h2>肥料データベースの特徴</h2>
+          <p>効率的な肥料選びをサポートする機能</p>
         </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-img">📊</div>
+            <div class="feature-content">
+              <h3>豊富なデータベース</h3>
+              <p>
+                多数の肥料データを網羅。成分情報、製造元、登録情報などを詳細に記録しています。
+              </p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-img">🔍</div>
+            <div class="feature-content">
+              <h3>詳細な成分検索</h3>
+              <p>
+                窒素、リン酸、カリウムなどの成分含有量で検索。必要な栄養素を含む肥料を簡単に見つけられます。
+              </p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-img">📱</div>
+            <div class="feature-content">
+              <h3>モバイル対応</h3>
+              <p>
+                スマートフォンやタブレットからもアクセス可能。圃場でもすぐに情報を確認できます。
+              </p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-img">📋</div>
+            <div class="feature-content">
+              <h3>信頼できる情報源</h3>
+              <p>
+                農林水産省の肥料登録情報を基にしており、信頼性の高いデータを提供しています。
+              </p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-img">💯</div>
+            <div class="feature-content">
+              <h3>完全無料</h3>
+              <p>
+                すべての機能を無料で利用できます。登録不要でどなたでもすぐに使えます。
+              </p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-img">⚡</div>
+            <div class="feature-content">
+              <h3>高速検索</h3>
+              <p>
+                複数の条件を組み合わせた検索も高速に結果を表示。効率的に肥料を絞り込めます。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
-    
+
     <section id="how-it-works" class="how-it-works">
-        <div class="container">
-            <div class="section-title">
-                <h2>肥料データベースの使い方</h2>
-                <p>簡単3ステップで最適な肥料を見つける</p>
-            </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>検索条件を入力</h3>
-                        <p>肥料名、メーカー名、登録番号などの基本情報や、窒素、リン酸などの成分含有量で検索条件を設定できます。</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>検索結果を確認</h3>
-                        <p>条件に合った肥料が一覧表示されます。各肥料の成分含有量を一目で比較できます。</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>詳細情報を活用</h3>
-                        <p>選んだ肥料の詳細な成分情報や登録情報を確認。必要に応じて製造元のサイトにアクセスできます。</p>
-                    </div>
-                </div>
-            </div>
+      <div class="container">
+        <div class="section-title">
+          <h2>肥料データベースの使い方</h2>
+          <p>簡単3ステップで最適な肥料を見つける</p>
         </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>検索条件を入力</h3>
+              <p>
+                肥料名、メーカー名、登録番号などの基本情報や、窒素、リン酸などの成分含有量で検索条件を設定できます。
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>検索結果を確認</h3>
+              <p>
+                条件に合った肥料が一覧表示されます。各肥料の成分含有量を一目で比較できます。
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>詳細情報を活用</h3>
+              <p>
+                選んだ肥料の詳細な成分情報や登録情報を確認。必要に応じて製造元のサイトにアクセスできます。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
-    
+
     <section id="sample" class="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>肥料データ例</h2>
-                <p>データベースで検索できる肥料情報の例</p>
-            </div>
-            <table class="sample-table">
-                <thead>
-                    <tr>
-                        <th>肥料名</th>
-                        <th>窒素</th>
-                        <th>リン酸</th>
-                        <th>カリウム</th>
-                        <th>カルシウム</th>
-                        <th>マグネシウム</th>
-                        <th>肥料業者</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>有機入り化成肥料14号</td>
-                        <td>14%</td>
-                        <td>10%</td>
-                        <td>12%</td>
-                        <td>0%</td>
-                        <td>0%</td>
-                        <td>JA全農</td>
-                    </tr>
-                    <tr>
-                        <td>スーパー堆肥プレミアム</td>
-                        <td>2%</td>
-                        <td>3%</td>
-                        <td>1%</td>
-                        <td>5%</td>
-                        <td>1%</td>
-                        <td>エコファーム株式会社</td>
-                    </tr>
-                    <tr>
-                        <td>花咲かせエース</td>
-                        <td>8%</td>
-                        <td>15%</td>
-                        <td>10%</td>
-                        <td>2%</td>
-                        <td>1%</td>
-                        <td>農友株式会社</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="/" class="btn">実際のデータを検索する</a>
-            </div>
+      <div class="container">
+        <div class="section-title">
+          <h2>肥料データ例</h2>
+          <p>データベースで検索できる肥料情報の例</p>
         </div>
+        <table class="sample-table">
+          <thead>
+            <tr>
+              <th>肥料名</th>
+              <th>窒素</th>
+              <th>リン酸</th>
+              <th>カリウム</th>
+              <th>カルシウム</th>
+              <th>マグネシウム</th>
+              <th>肥料業者</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>有機入り化成肥料14号</td>
+              <td>14%</td>
+              <td>10%</td>
+              <td>12%</td>
+              <td>0%</td>
+              <td>0%</td>
+              <td>JA全農</td>
+            </tr>
+            <tr>
+              <td>スーパー堆肥プレミアム</td>
+              <td>2%</td>
+              <td>3%</td>
+              <td>1%</td>
+              <td>5%</td>
+              <td>1%</td>
+              <td>エコファーム株式会社</td>
+            </tr>
+            <tr>
+              <td>花咲かせエース</td>
+              <td>8%</td>
+              <td>15%</td>
+              <td>10%</td>
+              <td>2%</td>
+              <td>1%</td>
+              <td>農友株式会社</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="text-align: center; margin-top: 2rem">
+          <a href="/" class="btn">実際のデータを検索する</a>
+        </div>
+      </div>
     </section>
-    
+
     <section id="about" class="about">
-        <div class="container">
-            <div class="section-title">
-                <h2>このサイトについて</h2>
-            </div>
-            <div class="about-content">
-                <p>肥料データベースは、農業生産者の皆様に最適な肥料選択のための情報を提供することを目的としています。</p>
-                
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">肥料情報について</h3>
-                <ul>
-                    <li>農林水産省より提供されている肥料情報を加工して提供しています。<br/>
-                    出典：<a href="https://fertilizer-search.maff.go.jp/FertilizerRegistrationSearch" target="_blank">肥料登録銘柄検索</a></li>
-                    <li>成分情報は機械処理で算出したおおよその値となっています。正確な情報は肥料提供元の製品情報を参照してください。</li>
-                    <li>以下の肥料情報は登録対象外としています。
-                        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
-                            <li>WEB上で肥料情報を公開していない肥料業者が提供するもの</li>
-                            <li>肥料の原料や資材などにあたるもの</li>
-                        </ul>
-                    </li>
-                    <li>肥料のリンク先のページには、同肥料の情報が含まれない場合があります。</li>
-                </ul>
-                
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">使いやすさの特徴</h3>
-                <ul>
-                    <li>詳細な成分検索：窒素、リン酸、カリウムなどの含有量で絞り込みができます</li>
-                    <li>シンプルな表示：必要な情報がひと目でわかるシンプルなテーブル表示</li>
-                    <li>モバイル対応：スマートフォンからでも快適に利用できます</li>
-                </ul>
-            </div>
+      <div class="container">
+        <div class="section-title">
+          <h2>このサイトについて</h2>
         </div>
+        <div class="about-content">
+          <p>
+            肥料データベースは、農業生産者の皆様に最適な肥料選択のための情報を提供することを目的としています。
+          </p>
+
+          <h3 style="margin-top: 2rem; margin-bottom: 1rem">
+            肥料情報について
+          </h3>
+          <ul>
+            <li>
+              農林水産省より提供されている肥料情報を加工して提供しています。<br />
+              出典：<a
+                href="https://fertilizer-search.maff.go.jp/FertilizerRegistrationSearch"
+                target="_blank"
+                >肥料登録銘柄検索</a
+              >
+            </li>
+            <li>
+              成分情報は機械処理で算出したおおよその値となっています。正確な情報は肥料提供元の製品情報を参照してください。
+            </li>
+            <li>
+              以下の肥料情報は登録対象外としています。
+              <ul style="margin-left: 2rem; margin-top: 0.5rem">
+                <li>WEB上で肥料情報を公開していない肥料業者が提供するもの</li>
+                <li>肥料の原料や資材などにあたるもの</li>
+              </ul>
+            </li>
+            <li>
+              肥料のリンク先のページには、同肥料の情報が含まれない場合があります。
+            </li>
+          </ul>
+
+          <h3 style="margin-top: 2rem; margin-bottom: 1rem">
+            使いやすさの特徴
+          </h3>
+          <ul>
+            <li>
+              詳細な成分検索：窒素、リン酸、カリウムなどの含有量で絞り込みができます
+            </li>
+            <li>
+              シンプルな表示：必要な情報がひと目でわかるシンプルなテーブル表示
+            </li>
+            <li>モバイル対応：スマートフォンからでも快適に利用できます</li>
+          </ul>
+        </div>
+      </div>
     </section>
-    
+
     <section class="cta">
-        <div class="cta-content">
-            <h2>今すぐ肥料データベースを利用する</h2>
-            <p>信頼性の高い肥料情報を無料で検索できます。登録不要ですぐに始められます。</p>
-            <a href="/" class="btn">データベースを使う</a>
-        </div>
+      <div class="cta-content">
+        <h2>今すぐ肥料データベースを利用する</h2>
+        <p>
+          信頼性の高い肥料情報を無料で検索できます。登録不要ですぐに始められます。
+        </p>
+        <a href="https://fertilizer-list-01.pages.dev/" class="btn"
+          >データベースを使う</a
+        >
+      </div>
     </section>
-    
+
     <footer>
-        <div class="footer-content">
-            <div class="footer-about">
-                <div class="footer-logo">🌱 肥料データベース</div>
-                <p>農業の効率化をサポートする無料の肥料情報検索サービス。</p>
-            </div>
-            <div class="footer-links">
-                <h3>メニュー</h3>
-                <ul>
-                    <li><a href="/">ホーム</a></li>
-                    <li><a href="/about">このサイトについて</a></li>
-                    <li><a href="/help">ヘルプ</a></li>
-                    <li><a href="/contact">お問い合わせ・ご要望</a></li>
-                </ul>
-            </div>
-            <div class="footer-links">
-                <h3>リンク</h3>
-                <ul>
-                    <li><a href="/disclaimer">免責事項</a></li>
-                    <li><a href="https://fertilizer-search.maff.go.jp/FertilizerRegistrationSearch" target="_blank">農林水産省 肥料登録銘柄検索</a></li>
-                </ul>
-            </div>
+      <div class="footer-content">
+        <div class="footer-about">
+          <div class="footer-logo">🌱 肥料データベース</div>
+          <p>農業の効率化をサポートする無料の肥料情報検索サービス。</p>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 肥料データベース All rights reserved.</p>
+        <div class="footer-links">
+          <h3>メニュー</h3>
+          <ul>
+            <li><a href="/">ホーム</a></li>
+            <li>
+              <a href="https://fertilizer-list-01.pages.dev/contact"
+                >お問い合わせ・ご要望</a
+              >
+            </li>
+          </ul>
         </div>
+        <div class="footer-links">
+          <h3>リンク</h3>
+          <ul>
+            <li>
+              <a href="https://fertilizer-list-01.pages.dev/disclaimer"
+                >免責事項</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://fertilizer-search.maff.go.jp/FertilizerRegistrationSearch"
+                target="_blank"
+                >農林水産省 肥料登録銘柄検索</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 肥料データベース All rights reserved.</p>
+      </div>
     </footer>
-</body>
+  </body>
 </html>
